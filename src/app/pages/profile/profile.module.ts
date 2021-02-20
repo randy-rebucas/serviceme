@@ -11,6 +11,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { FormComponent } from './form/form.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { Camera } from '@ionic-native/camera/ngx';
+import { ChangePhoneNumberComponent } from './change-phone-number/change-phone-number.component';
+import { RecaptchaModule } from 'ng-recaptcha';
 
 @NgModule({
   imports: [
@@ -19,16 +21,19 @@ import { Camera } from '@ionic-native/camera/ngx';
     ReactiveFormsModule,
     IonicModule,
     ProfilePageRoutingModule,
+    RecaptchaModule,
     SharedModule
   ],
   declarations: [
     ProfilePage,
     FormComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    ChangePhoneNumberComponent
   ],
   entryComponents: [
     FormComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    ChangePhoneNumberComponent
   ],
   providers: [
     Camera

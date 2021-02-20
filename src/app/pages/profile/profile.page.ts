@@ -16,6 +16,7 @@ import { FormComponent } from './form/form.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { UsersService } from '../users/users.service';
 import { Router } from '@angular/router';
+import { ChangePhoneNumberComponent } from './change-phone-number/change-phone-number.component';
 
 @Component({
   selector: 'app-profile',
@@ -98,6 +99,22 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
       modalEl.onDidDismiss().then((dataReturned) => {
         if (dataReturned.data.dismissed) {
           this.presentAlert('Profile updated', 'Password successfully updated!');
+        }
+      });
+    });
+  }
+
+  onChangePhone() {
+    this.subs.sink = from(this.modalController.create({
+      component: ChangePhoneNumberComponent,
+      swipeToClose: true,
+      presentingElement: this.routerOutlet.nativeEl
+    })).subscribe((modalEl) => {
+      modalEl.present();
+
+      modalEl.onDidDismiss().then((dataReturned) => {
+        if (dataReturned.data.dismissed) {
+          this.presentAlert('Profile updated', 'Phone successfully updated!');
         }
       });
     });
