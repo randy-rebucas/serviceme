@@ -12,7 +12,6 @@ import { FormComponent } from './form/form.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { Camera } from '@ionic-native/camera/ngx';
 import { ChangePhoneNumberComponent } from './change-phone-number/change-phone-number.component';
-import { RecaptchaModule } from 'ng-recaptcha';
 
 @NgModule({
   imports: [
@@ -21,7 +20,6 @@ import { RecaptchaModule } from 'ng-recaptcha';
     ReactiveFormsModule,
     IonicModule,
     ProfilePageRoutingModule,
-    RecaptchaModule,
     SharedModule
   ],
   declarations: [
