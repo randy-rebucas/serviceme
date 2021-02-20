@@ -2,25 +2,47 @@
     <ion-split-pane contentId="main-content">
         <ion-menu contentId="main-content" type="overlay">
             <ion-content>
-                <ion-list id="inbox-list">
-                    <ion-list-header>Inbox</ion-list-header>
-                    <ion-note>hi@ionicframework.com</ion-note>
-
-                    <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
-                        <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
-                            <ion-icon slot="start" [ios]="p.icon + '-outline'" [md]="p.icon + '-sharp'"></ion-icon>
-                            <ion-label>{{ p.title }}</ion-label>
+                <ion-list id="nav-list">
+                    <ion-menu-toggle auto-hide="false">
+                        <ion-item routerDirection="root" [routerLink]="['/pages/profile']" detail>
+                            <ng-container *ngIf="user$ | async as user; else elseTemplate">
+                                <ng-container *ngIf="user.photoURL; then loadAvatar; else loadDefault"></ng-container>
+                                <ng-template #loadAvatar>
+                                    <ion-avatar slot="start">
+                                        <img [src]="user.photoURL" alt="">
+                                    </ion-avatar>
+                                </ng-template>
+                                <ng-template #loadDefault>
+                                    <ion-avatar slot="start">
+                                        <ion-icon name="person-outline" size="large"></ion-icon>
+                                    </ion-avatar>
+                                </ng-template>
+                                <ion-label>
+                                    <h3>{{user.displayName !== null ? user.displayName : '--'}}</h3>
+                                    <p>{{user.email}}</p>
+                                </ion-label>
+                            </ng-container>
+                            <ng-template #elseTemplate>
+                                <ion-avatar slot="start">
+                                    <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+                                </ion-avatar>
+                                <ion-label>
+                                    <h3>
+                                        <ion-skeleton-text animated style="width: 70%"></ion-skeleton-text>
+                                    </h3>
+                                    <p>
+                                        <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
+                                    </p>
+                                </ion-label>
+                            </ng-template>
                         </ion-item>
+                        <ng-container *ngFor="let page of pages; let i = index; let last = last">
+                            <ion-item (click)="onClick(page.url)" lines="none" detail="false">
+                                <ion-icon slot="start" [ios]="page.icon + '-outline'" [md]="page.icon + '-sharp'"></ion-icon>
+                                <ion-label>{{ page.title }}</ion-label>
+                            </ion-item>
+                        </ng-container>
                     </ion-menu-toggle>
-                </ion-list>
-
-                <ion-list id="labels-list">
-                    <ion-list-header>Labels</ion-list-header>
-
-                    <ion-item *ngFor="let label of labels" lines="none">
-                        <ion-icon slot="start" ios="bookmark-outline" md="bookmark-sharp"></ion-icon>
-                        <ion-label>{{ label }}</ion-label>
-                    </ion-item>
                 </ion-list>
             </ion-content>
         </ion-menu>
