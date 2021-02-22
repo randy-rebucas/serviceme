@@ -92,7 +92,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }, (error: any) => {
       this.loadingController.dismiss();
       this.presentAlert(error.code, error.message);
-    })
+    });
   }
 
   setUserData(userCredential: firebase.auth.UserCredential) {
@@ -101,7 +101,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       firstName: this.form.value.firstname,
       lastName: this.form.value.lastname,
       middleName: null
-    }
+    };
 
     this.subs.sink = from(this.authService.setUserData(userData)).subscribe(() => {
       this.sendEmailVerification(userCredential);

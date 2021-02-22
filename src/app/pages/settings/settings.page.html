@@ -8,5 +8,15 @@
 </ion-header>
 
 <ion-content>
-
+    <ion-list>
+        <ion-list-header>
+            <ion-label>Availability</ion-label>
+        </ion-list-header>
+        <!-- [compareWith]="compare" -->
+        <ion-item *ngFor="let availablity of availablityList">
+            <ion-label>{{availablity.val}}</ion-label>
+            <ion-checkbox slot="end" (ionChange)="onPickAvailability($event, availablity)"></ion-checkbox>
+            <!-- [(ngModel)]="entry.isChecked" -->
+        </ion-item>
+    </ion-list>
 </ion-content>
