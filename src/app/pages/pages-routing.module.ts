@@ -40,9 +40,17 @@ const routes: Routes = [
       {
         path: 'settings',
         loadChildren: () => import('./settings/settings.module').then( m => m.SettingsPageModule)
+      },
+      {
+        path: 'terms-of-use',
+        loadChildren: () => import('./terms-of-use/terms-of-use.module').then( m => m.TermsOfUsePageModule)
+      },
+      {
+        path: 'privacy-policy',
+        loadChildren: () => import('./privacy-policy/privacy-policy.module').then( m => m.PrivacyPolicyPageModule)
       }
     ]
-  }
+  },
 ];
 
 @NgModule({
