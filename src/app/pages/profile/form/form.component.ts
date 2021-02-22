@@ -2,10 +2,12 @@ import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController, ModalController, NavParams } from '@ionic/angular';
 import { from, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { CountriesService } from 'src/app/shared/services/countries.service';
 import { SubSink } from 'subsink';
 import { UsersService } from '../../users/users.service';
+import firebase from 'firebase/app';
 
 @Component({
   selector: 'app-form',
@@ -14,10 +16,11 @@ import { UsersService } from '../../users/users.service';
 })
 export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
   public form: FormGroup;
-  public user$: Observable<any>;
+  public user$: Observable<{}>;
   public subs = new SubSink();
   public countries: any[] = [];
 
+  private user: firebase.User;
   constructor(
     private navParams: NavParams,
     private alertController: AlertController,
@@ -91,12 +94,19 @@ export class FormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.user$.subscribe((user) => {
+    from(this.authService.getCurrentUser()).pipe(
+      mergeMap((auhtUser) => {
+        this.user = auhtUser;
+        return this.userService.getUser(auhtUser.uid);
+      }),
+      map(userData => {
+        return {...this.user, ...userData};
+      })
+    ).subscribe((user) => {
       this.form.patchValue({
         firstname: user.name.firstname,
         midlename: user.name.midlename,
         lastname: user.name.lastname,
-        birthdate: user.birthdate,
         gender: user.gender,
         address1: user.address.address1,
         address2: user.address.address2,

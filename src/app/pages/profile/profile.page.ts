@@ -17,6 +17,7 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
 import { UsersService } from '../users/users.service';
 import { Router } from '@angular/router';
 import { ChangePhoneNumberComponent } from './change-phone-number/change-phone-number.component';
+import { ChangeEmailComponent } from './change-email/change-email.component';
 
 @Component({
   selector: 'app-profile',
@@ -24,13 +25,12 @@ import { ChangePhoneNumberComponent } from './change-phone-number/change-phone-n
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
-  public user$: Observable<{}>;
+  public user$: Observable<firebase.User>;
   public uploadPercent: Observable<number>;
   public showProgress: boolean;
 
   private username$: BehaviorSubject<string|null>;
   private username: string;
-  private user: firebase.User;
   private angularFireUploadTask: AngularFireUploadTask;
   private angularFireStorageReference: AngularFireStorageReference;
   private subs = new SubSink();
@@ -39,7 +39,6 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private alertController: AlertController,
     private authService: AuthService,
-    private userService: UsersService,
     private actionSheetController: ActionSheetController,
     private loadingController: LoadingController,
     private modalController: ModalController,
@@ -52,15 +51,7 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.user$ = from(this.authService.getCurrentUser()).pipe(
-      mergeMap((auhtUser) => {
-        this.user = auhtUser;
-        return this.userService.getUser(auhtUser.uid);
-      }),
-      map(userData => {
-        return {...this.user, ...userData};
-      })
-    );
+    this.user$ = from(this.authService.getCurrentUser());
   }
 
   ngAfterViewInit() {
@@ -72,9 +63,6 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
   onEdit() {
     this.subs.sink = from(this.modalController.create({
       component: FormComponent,
-      componentProps: {
-        user: this.user$
-      },
       swipeToClose: true,
       presentingElement: this.routerOutlet.nativeEl
     })).subscribe((modalEl) => {
@@ -99,6 +87,22 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
       modalEl.onDidDismiss().then((dataReturned) => {
         if (dataReturned.data.dismissed) {
           this.presentAlert('Profile updated', 'Password successfully updated!');
+        }
+      });
+    });
+  }
+
+  onChangeEmail() {
+    this.subs.sink = from(this.modalController.create({
+      component: ChangeEmailComponent,
+      swipeToClose: true,
+      presentingElement: this.routerOutlet.nativeEl
+    })).subscribe((modalEl) => {
+      modalEl.present();
+
+      modalEl.onDidDismiss().then((dataReturned) => {
+        if (dataReturned.data.dismissed) {
+          this.presentAlert('Profile updated', 'Email successfully updated!');
         }
       });
     });
@@ -214,11 +218,13 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   takePhoto(selectedSourceType: PictureSourceType) {
-    if (this.user?.displayName === null || this.user?.displayName === '') {
-      this.prompUsername(selectedSourceType);
-    } else {
-      this.capture(selectedSourceType);
-    }
+    from(this.authService.getCurrentUser()).subscribe((user) => {
+      if (user.displayName === null || user.displayName === '') {
+        this.prompUsername(selectedSourceType);
+      } else {
+        this.capture(selectedSourceType);
+      }
+    });
   }
 
   prompUsername(selectedSourceType: PictureSourceType) {

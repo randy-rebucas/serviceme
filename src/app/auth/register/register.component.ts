@@ -63,7 +63,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
           Validators.maxLength(12)
         ]
       })
-    },{
+    }, {
       validators: this.passwordConfirm.bind(this)
     });
   }

@@ -12,6 +12,7 @@ import { FormComponent } from './form/form.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { Camera } from '@ionic-native/camera/ngx';
 import { ChangePhoneNumberComponent } from './change-phone-number/change-phone-number.component';
+import { ChangeEmailComponent } from './change-email/change-email.component';
 
 @NgModule({
   imports: [
@@ -26,12 +27,14 @@ import { ChangePhoneNumberComponent } from './change-phone-number/change-phone-n
     ProfilePage,
     FormComponent,
     ChangePasswordComponent,
-    ChangePhoneNumberComponent
+    ChangePhoneNumberComponent,
+    ChangeEmailComponent
   ],
   entryComponents: [
     FormComponent,
     ChangePasswordComponent,
-    ChangePhoneNumberComponent
+    ChangePhoneNumberComponent,
+    ChangeEmailComponent
   ],
   providers: [
     Camera

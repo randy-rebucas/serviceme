@@ -44,9 +44,19 @@ export class AuthService {
     return user.updatePassword(newPassword);
   }
 
+  updateEmail(newEmail: string) {
+    const user = firebase.auth().currentUser;
+    return user.updateEmail(newEmail);
+  }
+
   changeEmai(newEmail: string) {
     const user = firebase.auth().currentUser;
     return user.updateEmail(newEmail);
+  }
+
+  changeNumber(phoneCredential: firebase.auth.AuthCredential) {
+    const user = firebase.auth().currentUser;
+    return user.updatePhoneNumber(phoneCredential);
   }
 
   signInWithEmail(email: string, password: string) {
