@@ -25,11 +25,11 @@ import { ChangeEmailComponent } from './change-email/change-email.component';
   styleUrls: ['./profile.page.scss'],
 })
 export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
-  public user$: Observable<firebase.User>;
+  public user$: Observable<{}>;
   public uploadPercent: Observable<number>;
   public showProgress: boolean;
-
   private username$: BehaviorSubject<string|null>;
+  private user: firebase.User;
   private username: string;
   private angularFireUploadTask: AngularFireUploadTask;
   private angularFireStorageReference: AngularFireStorageReference;
@@ -39,6 +39,7 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
     private router: Router,
     private alertController: AlertController,
     private authService: AuthService,
+    private userService: UsersService,
     private actionSheetController: ActionSheetController,
     private loadingController: LoadingController,
     private modalController: ModalController,
@@ -51,7 +52,15 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.user$ = from(this.authService.getCurrentUser());
+    this.user$ = from(this.authService.getCurrentUser()).pipe(
+        mergeMap((auhtUser) => {
+          this.user = auhtUser;
+          return this.userService.getUser(auhtUser.uid);
+        }),
+        map(userData => {
+          return {...this.user, ...userData};
+        })
+      );
   }
 
   ngAfterViewInit() {
@@ -63,6 +72,9 @@ export class ProfilePage implements OnInit, AfterViewInit, OnDestroy {
   onEdit() {
     this.subs.sink = from(this.modalController.create({
       component: FormComponent,
+      componentProps: {
+        user: this.user$
+      },
       swipeToClose: true,
       presentingElement: this.routerOutlet.nativeEl
     })).subscribe((modalEl) => {

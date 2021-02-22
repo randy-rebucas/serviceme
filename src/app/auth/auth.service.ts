@@ -54,7 +54,7 @@ export class AuthService {
     return user.updateEmail(newEmail);
   }
 
-  changeNumber(phoneCredential: firebase.auth.AuthCredential) {
+  changePhone(phoneCredential: firebase.auth.AuthCredential) {
     const user = firebase.auth().currentUser;
     return user.updatePhoneNumber(phoneCredential);
   }

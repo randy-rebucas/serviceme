@@ -7,7 +7,5 @@ export class ProfileService {
 
   constructor() { }
 
-  get windowRef(){
-    return window;
- }
+ 
 }

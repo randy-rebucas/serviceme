@@ -4,7 +4,6 @@ import { AlertController, LoadingController, ModalController } from '@ionic/angu
 import { from } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { SubSink } from 'subsink';
-import { ProfileService } from '../profile.service';
 import firebase from 'firebase/app';
 @Component({
   selector: 'app-change-phone-number',
@@ -21,22 +20,16 @@ export class ChangePhoneNumberComponent implements OnInit, OnDestroy {
     private modalController: ModalController,
     private loadingController: LoadingController,
     private alertController: AlertController,
-    private authService: AuthService,
-    public win: ProfileService
+    private authService: AuthService
   ) {
     this.formSubmited = false;
   }
 
   ngOnInit() {
-    this.windowRef = this.win.windowRef;
-    this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('re-captcha', {
-        size: 'invisible'
-    });
-
     this.form = new FormGroup({
       phoneNumber: new FormControl(null, {
         updateOn: 'blur',
-        validators: [Validators.required, Validators.maxLength(8)]
+        validators: [Validators.required, Validators.maxLength(13)]
       })
     });
 
@@ -54,6 +47,39 @@ export class ChangePhoneNumberComponent implements OnInit, OnDestroy {
     });
   }
 
+  onVerify(verificationId: any, verificationCode: any) {
+    const phoneCredential = firebase.auth.PhoneAuthProvider.credential(verificationId, verificationCode);
+    from(firebase.auth().currentUser.updatePhoneNumber(phoneCredential)).subscribe(() => {
+      this.loadingController.dismiss();
+      this.onDismiss(true);
+    }, (error: any) => {
+      this.loadingController.dismiss();
+      this.presentAlert(error.code, error.message);
+    });
+  }
+
+  doUpdate() {
+    const appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {size: 'invisible'});
+    const provider = new firebase.auth.PhoneAuthProvider();
+    this.subs.sink = from(provider.verifyPhoneNumber(this.form.value.phoneNumber, appVerifier)).subscribe((verificationId) => {
+        const verificationCode = window.prompt('Please enter the verification ' +
+            'code that was sent to your mobile device.');
+        this.onVerify(verificationId, verificationCode);
+    }, (error: any) => {
+      this.loadingController.dismiss();
+      this.presentAlert(error.code, error.message);
+    });
+  }
+
+  onUpdate() {
+    this.subs.sink = from(this.loadingController.create({
+      message: 'Please wait...'
+    })).subscribe(loadingEl => {
+      loadingEl.present();
+      this.doUpdate();
+    });
+  }
+
   presentAlert(alertHeader: string, alertMessage: string) {
     this.subs.sink = from(this.alertController.create({
       header: alertHeader, // alert.code,
@@ -61,23 +87,6 @@ export class ChangePhoneNumberComponent implements OnInit, OnDestroy {
       buttons: ['OK']
     })).subscribe(alertEl => {
         alertEl.present();
-    });
-  }
-
-  onUpdate() {
-    const appVerifier = this.windowRef.recaptchaVerifier;
-    firebase.auth().signInWithPhoneNumber(this.form.value.phoneNumber, appVerifier).then((res) => {
-      console.log(res);
-      this.windowRef.confirmationResult = res;
-      this.formSubmited = true;
-    });
-  }
-
-  onVerify() {
-    this.windowRef.confirmationResult.confirm(this.codeForm.value.code).then(p => {
-        console.log(p);
-    }).catch(err => {
-        console.log(err);
     });
   }
 
