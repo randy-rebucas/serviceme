@@ -42,7 +42,6 @@ export class FormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
     this.durations$.subscribe((durations) => {
       this.durations = durations;
     });
@@ -69,7 +68,6 @@ export class FormComponent implements OnInit, OnDestroy {
     this.categories$ = this.categoriesService.getAll();
 
     if (!this.state) {
-      console.log(this.offer);
       this.form.patchValue({
         title: this.offer.title,
         description: this.offer.description,
@@ -98,7 +96,7 @@ export class FormComponent implements OnInit, OnDestroy {
       title: this.form.value.title,
       description: this.form.value.description,
       category: this.form.value.category,
-      duration: this.durations,
+      durations: this.durations,
       charges: Number(this.form.value.charges),
       timestamp: firebase.firestore.Timestamp.fromDate(new Date())
     };

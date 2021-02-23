@@ -8,21 +8,21 @@ import {
   QuerySnapshot
 } from '@angular/fire/firestore';
 
-import { Offers as useClass } from './offers';
+import { Settings as useClass } from './settings';
 
-const collection = 'offers';
+const collection = 'settings';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OffersService {
+export class SettingsService {
 
   constructor(
     private angularFirestore: AngularFirestore
   ) { }
 
-  private defaultCollection(colRef: string): AngularFirestoreCollection<useClass> {
-    return this.angularFirestore.collection<useClass>('users/' + colRef + '/' + collection);
+  private defaultCollection(): AngularFirestoreCollection<useClass> {
+    return this.angularFirestore.collection<useClass>(collection);
   }
 
   private fetchData(col: AngularFirestoreCollection): Observable<any> {
@@ -37,16 +37,16 @@ export class OffersService {
       );
   }
 
-  getAll(colRef: string): Observable<useClass[]> {
-    return this.fetchData(this.defaultCollection(colRef));
+  getAll(): Observable<useClass[]> {
+    return this.fetchData(this.defaultCollection());
   }
 
-  getSize(colRef: string): Observable<QuerySnapshot<useClass>> {
-    return this.defaultCollection(colRef).get();
+  getSize(): Observable<QuerySnapshot<useClass>> {
+    return this.defaultCollection().get();
   }
 
-  getOne(colRef: string, id: string): Observable<useClass> {
-    return this.defaultCollection(colRef).doc<useClass>(id).valueChanges().pipe(
+  getOne(id: string): Observable<useClass> {
+    return this.defaultCollection().doc<useClass>(id).valueChanges().pipe(
       take(1),
       map(data => {
         data.id = id;
@@ -55,15 +55,18 @@ export class OffersService {
     );
   }
 
-  insert(colRef: string, data: any): Promise<DocumentReference> {
-    return this.defaultCollection(colRef).add(data);
+  insert(userId: string, data: any) {
+    return this.defaultCollection().doc(userId).set({
+      availability: data.availability,
+      currency: data.currency
+    });
   }
 
   update(colRef: string, id: string, data: any): Promise<void> {
-    return this.defaultCollection(colRef).doc(id).update(data);
+    return this.defaultCollection().doc(id).update(data);
   }
 
   delete(colRef: string, id: string): Promise<void> {
-    return this.defaultCollection(colRef).doc(id).delete();
+    return this.defaultCollection().doc(id).delete();
   }
 }

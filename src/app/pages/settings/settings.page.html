@@ -8,15 +8,26 @@
 </ion-header>
 
 <ion-content>
+
     <ion-list>
-        <ion-list-header>
+        <ion-item>
+            <ion-label>Currency</ion-label>
+            <ion-select [value]="defaultCurrency" (ionChange)="onSelectCurrency($event)">
+                <ion-select-option value="USD">USD</ion-select-option>
+                <ion-select-option value="PHP">PHP</ion-select-option>
+            </ion-select>
+        </ion-item>
+        <ion-item>
             <ion-label>Availability</ion-label>
-        </ion-list-header>
-        <!-- [compareWith]="compare" -->
-        <ion-item *ngFor="let availablity of availablityList">
-            <ion-label>{{availablity.val}}</ion-label>
-            <ion-checkbox slot="end" (ionChange)="onPickAvailability($event, availablity)"></ion-checkbox>
-            <!-- [(ngModel)]="entry.isChecked" -->
+            <ion-select multiple="true" [compareWith]="compare" [value]="availablities" (ionChange)="onSelectAvailability($event)">
+                <ion-select-option *ngFor="let availablity of availablityList" [value]="availablity">{{availablity.title}}</ion-select-option>
+            </ion-select>
         </ion-item>
     </ion-list>
+
 </ion-content>
+<ion-footer class="ion-no-border">
+    <ion-toolbar>
+        <ion-button shape="round" expand="block" (click)="onUpdate()">Update</ion-button>
+    </ion-toolbar>
+</ion-footer>

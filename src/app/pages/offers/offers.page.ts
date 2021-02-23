@@ -9,6 +9,7 @@ import { IonItemSliding, IonRouterOutlet, LoadingController, ModalController } f
 import { FormComponent } from './form/form.component';
 import { SubSink } from 'subsink';
 import { DetailComponent } from './detail/detail.component';
+import { SettingsService } from '../settings/settings.service';
 
 @Component({
   selector: 'app-offers',
@@ -18,17 +19,28 @@ import { DetailComponent } from './detail/detail.component';
 export class OffersPage implements OnInit, OnDestroy {
   // observables
   public offers$: Observable<Offers[]>;
+
+  public defaultCurrency: string;
+
   private subs = new SubSink();
   constructor(
     private modalController: ModalController,
     private loadingController: LoadingController,
     private authService: AuthService,
     private offersService: OffersService,
+    private settingsService: SettingsService,
     private routerOutlet: IonRouterOutlet,
   ) { }
 
   ngOnInit() {
-    // get banks subcollections
+    from(this.authService.getCurrentUser()).pipe(
+      switchMap((user) => {
+        return this.settingsService.getOne(user.uid);
+      })
+    ).subscribe((settings) => {
+      this.defaultCurrency = settings.currency;
+    });
+
     this.offers$ = this.authService.getUserState().pipe(
       switchMap((user) =>
         this.offersService.getAll(user.uid)

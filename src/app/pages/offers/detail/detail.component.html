@@ -37,12 +37,12 @@
             </ion-item>
             <ion-item>
                 <ion-icon name="time-outline" slot="start"></ion-icon>
-                <ion-label>{{offer.duration}}</ion-label>
+                <ion-label>{{ (offer.durations !== 60) ? offer.durations + ' mins' : offer.durations + ' hour' }}</ion-label>
                 <ion-note slot="end">Duration</ion-note>
             </ion-item>
             <ion-item>
                 <ion-icon name="cash-outline" slot="start"></ion-icon>
-                <ion-label>{{offer.charges | currency:'PHP':'symbol-narrow' }}</ion-label>
+                <ion-label>{{offer.charges | currency:defaultCurrency:'symbol-narrow' }}</ion-label>
                 <ion-note slot="end">Charges</ion-note>
             </ion-item>
             <ion-item button (click)="onEdit(offer)" color="primary">

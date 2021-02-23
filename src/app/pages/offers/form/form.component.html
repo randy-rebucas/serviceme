@@ -65,7 +65,7 @@
                     </ion-label>
                 </ion-item>
 
-                <ion-list-header>Duration - {{durations}}</ion-list-header>
+                <ion-list-header>Duration - {{ (durations !== 60) ? durations + ' mins' : '1 hour' }}</ion-list-header>
                 <ion-item>
                     <ion-range min="25" max="60" step="5" snaps="true" [value]="durations" (ionChange)="onDurationSelected($event)"></ion-range>
                 </ion-item>
@@ -81,7 +81,7 @@
                 </ion-item>
             </ion-list>
             <ion-button expand="block" type="submit">
-                Submit
+                {{ (state) ? 'Submit' : 'Update' }}
             </ion-button>
         </ion-card>
 
