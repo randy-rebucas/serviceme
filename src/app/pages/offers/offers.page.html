@@ -9,8 +9,8 @@
 
 <ion-content [fullscreen]="true">
     <ng-container *ngIf="offers$ | async; let offers; else loadingOffers">
-        <ion-slides>
-            <ion-slide *ngFor="let offer of offers">
+        <ion-list>
+            <ion-item-sliding *ngFor="let offer of offers" #slidingItem>
                 <ion-item lines="none">
                     <ion-thumbnail slot="start">
                         <ion-img [src]="offer.imageUrl"></ion-img>
@@ -27,9 +27,16 @@
                         </ion-chip>
                     </ion-label>
                 </ion-item>
-            </ion-slide>
-        </ion-slides>
-
+                <ion-item-options side="end">
+                    <ion-item-option color="danger" (click)="onDelete(offer, slidingItem)">
+                        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                    </ion-item-option>
+                    <ion-item-option color="primary" (click)="onDeail(offer, slidingItem)">
+                        <ion-icon name="information-circle-outline" slot="icon-only"></ion-icon>
+                    </ion-item-option>
+                </ion-item-options>
+            </ion-item-sliding>
+        </ion-list>
         <div id="container" class="ion-text-center" *ngIf="offers.length === 0">
             <ion-icon name="list-outline"></ion-icon>
             <p>No offers found</p>

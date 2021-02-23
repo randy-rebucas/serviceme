@@ -9,6 +9,7 @@ import { OffersPageRoutingModule } from './offers-routing.module';
 import { OffersPage } from './offers.page';
 import { FormComponent } from './form/form.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { DetailComponent } from './detail/detail.component';
 
 @NgModule({
   imports: [
@@ -21,10 +22,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
   ],
   declarations: [
     OffersPage,
-    FormComponent
+    FormComponent,
+    DetailComponent
   ],
   entryComponents: [
-    FormComponent
+    FormComponent,
+    DetailComponent
   ],
   providers: [
     Camera

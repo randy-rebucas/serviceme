@@ -1,6 +1,6 @@
 ion-header {
     ion-toolbar {
-        --color: #2B7777;
+        --color: var(--ion-color-primary);
     }
 }
 
@@ -13,7 +13,7 @@ ion-content {
     }
     form {
         ion-grid {
-            border: 1px solid #e0e0e0;
+            border: 1px solid var(--ion-color-medium);
             box-shadow: rgb(0 0 0 / 12%) 0px 4px 16px;
             border-radius: 10px;
             ion-row {

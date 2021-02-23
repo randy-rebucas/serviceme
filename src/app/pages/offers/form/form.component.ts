@@ -1,14 +1,16 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController, ModalController, NavParams } from '@ionic/angular';
 
 import { AuthService } from 'src/app/auth/auth.service';
 import { OffersService } from '../offers.service';
 
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { SubSink } from 'subsink';
 import firebase from 'firebase/app';
 import { CategoriesService } from 'src/app/shared/services/categories.service';
+import { Category } from 'src/app/shared/classes/category';
+import { Offers } from '../offers';
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
@@ -16,10 +18,12 @@ import { CategoriesService } from 'src/app/shared/services/categories.service';
 })
 export class FormComponent implements OnInit, OnDestroy {
   public form: FormGroup;
-  public durations: string;
+  public durations: number;
   public title: string;
+  public state: boolean;
   public categories$: Observable<any[]>;
-  private durations$: BehaviorSubject<string|null>;
+  public offer: Offers;
+  private durations$: BehaviorSubject<number|null>;
   private subs = new SubSink();
 
   constructor(
@@ -31,11 +35,14 @@ export class FormComponent implements OnInit, OnDestroy {
     private modalController: ModalController,
     private alertController: AlertController
   ) {
-    this.durations$ = new BehaviorSubject('25 mins');
+    this.durations$ = new BehaviorSubject(25);
     this.title = this.navParams.data.title;
+    this.state = this.navParams.data.state;
+    this.offer = this.navParams.data.offerData;
   }
 
   ngOnInit() {
+
     this.durations$.subscribe((durations) => {
       this.durations = durations;
     });
@@ -60,11 +67,22 @@ export class FormComponent implements OnInit, OnDestroy {
     });
 
     this.categories$ = this.categoriesService.getAll();
+
+    if (!this.state) {
+      console.log(this.offer);
+      this.form.patchValue({
+        title: this.offer.title,
+        description: this.offer.description,
+        category: this.offer.category,
+        charges: this.offer.charges
+      });
+
+      this.durations$.next(this.offer.durations);
+    }
   }
 
   onDurationSelected(event: CustomEvent) {
-    const selectedDuration = (event.detail.value !== 60) ? event.detail.value + ' mins' : '1 hour';
-    this.durations$.next(selectedDuration);
+    this.durations$.next(event.detail.value);
   }
 
   get formCtrls() { return this.form.controls; }
@@ -76,7 +94,7 @@ export class FormComponent implements OnInit, OnDestroy {
   }
 
   doCreate(userId: string) {
-    const offer  = {
+    const offerData  = {
       title: this.form.value.title,
       description: this.form.value.description,
       category: this.form.value.category,
@@ -84,14 +102,25 @@ export class FormComponent implements OnInit, OnDestroy {
       charges: Number(this.form.value.charges),
       timestamp: firebase.firestore.Timestamp.fromDate(new Date())
     };
-    this.subs.sink = from(this.offersService.insert(userId, offer)).subscribe(() => {
-      this.form.reset();
-      this.loadingController.dismiss();
-      this.onDismiss(true);
-    }, (error: any) => {
-      this.loadingController.dismiss();
-      this.presentAlert(error.code, error.message);
-    });
+    if (this.state) {
+      this.subs.sink = from(this.offersService.insert(userId, offerData)).subscribe(() => {
+        this.form.reset();
+        this.loadingController.dismiss();
+        this.onDismiss(true);
+      }, (error: any) => {
+        this.loadingController.dismiss();
+        this.presentAlert(error.code, error.message);
+      });
+    } else {
+      this.subs.sink = from(this.offersService.update(userId, this.offer.id, offerData)).subscribe(() => {
+        this.form.reset();
+        this.loadingController.dismiss();
+        this.onDismiss(true);
+      }, (error: any) => {
+        this.loadingController.dismiss();
+        this.presentAlert(error.code, error.message);
+      });
+    }
   }
 
   getCurrentUser() {

@@ -1,5 +1,6 @@
 ion-header {
     ion-toolbar {
-        --color: #2B7777;
+        --color: var(--ion-color-primary);
+        ;
     }
 }

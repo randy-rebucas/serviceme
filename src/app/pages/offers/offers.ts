@@ -3,7 +3,7 @@ export class Offers {
         public title: string,
         public description: string,
         public category: string,
-        public durations: string,
+        public durations: number,
         public charges: number,
         public timestamp: any,
         public imageUrl?: string,
