@@ -48,13 +48,13 @@ const routes: Routes = [
       {
         path: 'privacy-policy',
         loadChildren: () => import('./privacy-policy/privacy-policy.module').then( m => m.PrivacyPolicyPageModule)
-      }
+      },
+      {
+        path: 'offers',
+        loadChildren: () => import('./offers/offers.module').then( m => m.OffersPageModule)
+      },
     ]
-  },
-  {
-    path: 'offers',
-    loadChildren: () => import('./offers/offers.module').then( m => m.OffersPageModule)
-  },
+  }
 ];
 
 @NgModule({

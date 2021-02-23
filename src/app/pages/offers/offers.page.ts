@@ -5,7 +5,7 @@ import { switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/auth/auth.service';
 import { OffersService } from './offers.service';
 import { Offers } from './offers';
-import { ModalController } from '@ionic/angular';
+import { IonRouterOutlet, ModalController } from '@ionic/angular';
 import { FormComponent } from './form/form.component';
 import { SubSink } from 'subsink';
 
@@ -21,7 +21,8 @@ export class OffersPage implements OnInit, OnDestroy {
   constructor(
     private modalController: ModalController,
     private authService: AuthService,
-    private offersService: OffersService
+    private offersService: OffersService,
+    private routerOutlet: IonRouterOutlet,
   ) { }
 
   ngOnInit() {
@@ -34,15 +35,23 @@ export class OffersPage implements OnInit, OnDestroy {
   }
 
   onCreate() {
+    // const modal = await this.modalController.create({
+    //   component: FormComponent,
+    //      componentProps: {
+    //     title: 'Create Offer'
+    //   },
+    //   cssClass: 'my-custom-class'
+    // });
+    // return await modal.present();
+
     this.subs.sink = from(this.modalController.create({
       component: FormComponent,
       componentProps: {
         title: 'Create Offer'
-      }
+      },
+      swipeToClose: true,
+      presentingElement: this.routerOutlet.nativeEl
     })).subscribe((modalEl) => {
-      modalEl.onDidDismiss().then(() => {
-        // ionItemSliding.closeOpened();
-      });
       modalEl.present();
     });
   }

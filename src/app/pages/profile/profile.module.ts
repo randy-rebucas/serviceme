@@ -5,12 +5,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { ProfilePageRoutingModule } from './profile-routing.module';
-
+import { File } from '@ionic-native/file/ngx';
+import { Camera } from '@ionic-native/camera/ngx';
 import { ProfilePage } from './profile.page';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { FormComponent } from './form/form.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
-import { Camera } from '@ionic-native/camera/ngx';
 import { ChangePhoneNumberComponent } from './change-phone-number/change-phone-number.component';
 import { ChangeEmailComponent } from './change-email/change-email.component';
 
@@ -37,7 +37,8 @@ import { ChangeEmailComponent } from './change-email/change-email.component';
     ChangeEmailComponent
   ],
   providers: [
-    Camera
+    Camera,
+    File
   ]
 })
 export class ProfilePageModule {}

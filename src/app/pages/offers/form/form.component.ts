@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AlertController, LoadingController, ModalController } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, NavParams } from '@ionic/angular';
 
 import { AuthService } from 'src/app/auth/auth.service';
 import { OffersService } from '../offers.service';
@@ -8,7 +8,6 @@ import { OffersService } from '../offers.service';
 import { BehaviorSubject, from, Observable } from 'rxjs';
 import { SubSink } from 'subsink';
 import firebase from 'firebase/app';
-import { switchMap } from 'rxjs/operators';
 import { CategoriesService } from 'src/app/shared/services/categories.service';
 @Component({
   selector: 'app-form',
@@ -18,11 +17,13 @@ import { CategoriesService } from 'src/app/shared/services/categories.service';
 export class FormComponent implements OnInit, OnDestroy {
   public form: FormGroup;
   public durations: string;
+  public title: string;
   public categories$: Observable<any[]>;
   private durations$: BehaviorSubject<string|null>;
   private subs = new SubSink();
 
   constructor(
+    private navParams: NavParams,
     private authService: AuthService,
     private offersService: OffersService,
     private categoriesService: CategoriesService,
@@ -31,6 +32,7 @@ export class FormComponent implements OnInit, OnDestroy {
     private alertController: AlertController
   ) {
     this.durations$ = new BehaviorSubject('25 mins');
+    this.title = this.navParams.data.title;
   }
 
   ngOnInit() {
