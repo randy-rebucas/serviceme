@@ -33,7 +33,7 @@ export class OffersPage implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    from(this.authService.getCurrentUser()).pipe(
+    this.subs.sink = from(this.authService.getCurrentUser()).pipe(
       switchMap((user) => {
         return this.settingsService.getOne(user.uid);
       })

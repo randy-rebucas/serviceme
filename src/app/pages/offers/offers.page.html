@@ -8,6 +8,11 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+    <ion-header collapse="condense">
+        <ion-toolbar>
+            <ion-title size="large">Offers</ion-title>
+        </ion-toolbar>
+    </ion-header>
     <ng-container *ngIf="offers$ | async; let offers; else loadingOffers">
         <ion-list>
             <ion-item-sliding *ngFor="let offer of offers" #slidingItem>

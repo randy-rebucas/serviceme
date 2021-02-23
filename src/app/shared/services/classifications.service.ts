@@ -8,14 +8,14 @@ import {
   QuerySnapshot
 } from '@angular/fire/firestore';
 
-import { Settings as useClass } from './settings';
+import { Classification as useClass } from './../classes/classification';
 
-const collection = 'settings';
+const collection = 'classifications';
 
 @Injectable({
   providedIn: 'root'
 })
-export class SettingsService {
+export class ClassificationsService {
 
   constructor(
     private angularFirestore: AngularFirestore
@@ -55,19 +55,15 @@ export class SettingsService {
     );
   }
 
-  insert(userId: string, data: any) {
-    return this.defaultCollection().doc(userId).set({
-      classification: data.classification,
-      availability: data.availability,
-      currency: data.currency
-    });
+  insert(data: any): Promise<DocumentReference> {
+    return this.defaultCollection().add(data);
   }
 
-  update(colRef: string, id: string, data: any): Promise<void> {
+  update(id: string, data: any): Promise<void> {
     return this.defaultCollection().doc(id).update(data);
   }
 
-  delete(colRef: string, id: string): Promise<void> {
+  delete(id: string): Promise<void> {
     return this.defaultCollection().doc(id).delete();
   }
 }
